@@ -1,0 +1,80 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ukrainian]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+\geometry{margin=2cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    showstringspaces=false
+}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    \large \textbf{Звіт про виконання лабораторної роботи №3}\\
+    \large з курсу ``Advanced Computer Vision 2026''\\
+    \vfill
+    \Large \textbf{Тема: Створення пошукової системи по відео на основі моделі CLIP та кластеризація контенту}\\
+    \vfill
+    \large Виконав: студент групи ММШІ-2\\
+    \large \textbf{Коломієць Микола}\\
+    \vfill
+    \large Дата: \today
+\end{titlepage}
+
+\section{Мета роботи}
+Створення прототипу відео-пошукової системи, яка здатна приймати текстовий запит і повертати найбільш релевантні відеоматеріали. Додатковою метою є проведення автоматичної кластеризації відео-даних для групування контенту за тематиками.
+
+\section{Використані технології та методи}
+\begin{itemize}
+    \item \textbf{Модель:} CLIP (ViT-B/32) від OpenAI для отримання векторних представлень (embeddings) тексту та зображень.
+    \item \textbf{Обробка відео:} Фреймворк OpenCV для вибірки кадрів (sampling) з інтервалом в 1 секунду.
+    \item \textbf{Агрегація:} Метод Mean Pooling для обчислення фінального дескриптора відео на основі ембеддінгів окремих кадрів.
+    \item \textbf{Кластеризація:} Алгоритми K-Means та DBSCAN (метрика - cosine similarity).
+\end{itemize}
+
+\section{Опис експериментів та результатів}
+
+\subsection{Пошук за текстовим запитом}
+Для тестування було використано датасет, що складається з відео категорій ``Sports'' та ``Gaming''.
+\begin{itemize}
+    \item \textbf{Результат:} Система успішно ідентифікує контент. При запиті, що стосувався ігрової тематики, модель точно виділила фрагменти гри \textbf{Assassin's Creed} серед загального масиву даних.
+    \item \textbf{Ранжування:} Косинусна близькість дозволила побудувати коректний топ результатів, де спортивний та ігровий контент чітко розмежовуються.
+\end{itemize}
+
+\subsection{Кластеризація (K-Means)}
+При використанні K-Means з параметром $k=2$ (або більше), алгоритм стабільно розділив дані на дві великі групи:
+\begin{enumerate}
+    \item Спортивні змагання (футбол, атлетика тощо).
+    \item Геймплей відеоігор.
+\end{enumerate}
+
+\subsection{Кластеризація (DBSCAN)}
+Алгоритм DBSCAN показав більш деталізовану структуру:
+\begin{itemize}
+    \item Було виявлено значну кількість ``шуму'' (outliers), що відповідає відео з унікальними візуальними характеристиками.
+    \item Алгоритм не лише розділив основні категорії, а й самостійно виділив специфічну підгрупу — \textbf{відео з Minecraft}, завдяки характерному кубічному стилю графіки, який утворює щільний кластер у векторному просторі CLIP.
+\end{itemize}
+
+\section{Висновки}
+Розроблена система демонструє високу ефективність у задачах Zero-shot пошуку. Використання Mean Pooling для кадрів відео виявилося достатнім для точного тематичного пошуку та кластеризації. Модель CLIP успішно справляється з розпізнаванням складних візуальних патернів (наприклад, стилістика Assassin's Creed або Minecraft) без додаткового донавчання.
+
+\end{document}
